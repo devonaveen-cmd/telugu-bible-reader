@@ -1,18 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="manifest" href="manifest.json">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; manifest-src 'self';script-src 'unsafe-inline'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'">
+  <meta name="theme-color" content="#6557f5">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Bible Reader">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'self'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data: 'self'; media-src data:; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'">
 <title>Telugu Bible Reader</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link id="theme-icon" rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%236557f5%22%2F%3E%3Cpath%20d%3D%22M32%205l7.6%2016%2017.5%202.5-12.7%2012.2%203.1%2017.4L32%2045l-15.5%208.1%203.1-17.4L6.9%2023.5%2024.4%2021Z%22%20fill%3D%22%23f7c325%22%20stroke%3D%22%23132144%22%20stroke-width%3D%222%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E">
   <link rel="alternate icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%236557f5%22%2F%3E%3Cpath%20d%3D%22M32%205l7.6%2016%2017.5%202.5-12.7%2012.2%203.1%2017.4L32%2045l-15.5%208.1%203.1-17.4L6.9%2023.5%2024.4%2021Z%22%20fill%3D%22%23f7c325%22%20stroke%3D%22%23132144%22%20stroke-width%3D%222%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=Noto+Serif+Telugu:wght@400;600;700&family=Kalam:wght@400;700&family=Playfair+Display:ital,wght@1,400;1,600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=Noto+Serif+Telugu:wght@400;600;700&family=Kalam:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
 /* ============================================================
@@ -2453,17 +2460,9 @@ body.dual-on:not(.np-open) .dual-divider { display: block; position: absolute; l
    ===================================================================== */
 
 
-/* 1. [BLOCKER] Legacy "Begin reading" placeholder turned full-screen.
-   It shares the .welcome class with the new #welcome intro, so the v50/v51
-   position:fixed; inset:0; z-index:120 rules apply to it too. On a first
-   visit (no saved chapter) it covers the whole app with no way to close it.
-   This puts it back into the reading area as a normal card. */
-#readingArea > .welcome {
-  position: static; inset: auto; z-index: auto;
-  display: block; width: auto; max-width: 35rem;
-  margin: 4rem auto; padding: 2.5rem 2rem;
-  overflow: visible; background: var(--paper-raised);
-}
+/* 1. The welcome intro and the old "Begin reading" placeholder card have
+   both been removed — the app opens straight into a chapter. */
+
 
 
 /* 2. Highlights vanish on the active/hovered row (the joy-layer hover tint
@@ -2980,168 +2979,6 @@ body[data-theme="midnight"], body[data-theme="jade"], body[data-theme="rose"] { 
   .shelf-tab { flex: 0 0 calc((100% - 4 * .35rem) / 5); max-width: calc((100% - 4 * .35rem) / 5); }
 }
 
-/* =====================================================================
-   WELCOME — the opening page of the book.
-   ONE consolidated rule set (replaces the old v50/v51/v52/v58/v59/v60
-   stack). All colour comes from theme variables; layout holds from 360px
-   to 1280px+; motion honours prefers-reduced-motion.
-   ===================================================================== */
-.welcome {
-  position: fixed; inset: 0; z-index: var(--z-welcome);
-  display: grid; place-items: center;
-  padding: calc(.9rem + env(safe-area-inset-top, 0px)) .9rem calc(.9rem + env(safe-area-inset-bottom, 0px));
-  background:
-    radial-gradient(120% 90% at 50% -10%, color-mix(in srgb, var(--paper) 86%, var(--joy-1) 14%), var(--paper) 62%),
-    var(--paper);
-  overflow-y: auto;
-  overscroll-behavior: contain;
-}
-.welcome[hidden] { display: none; }
-
-/* the page itself */
-.wel-card {
-  position: relative;
-  width: min(34rem, 100%);
-  margin: auto;
-  padding: clamp(1.7rem, 5vw, 2.7rem) clamp(1.15rem, 5vw, 2.5rem) clamp(1.35rem, 4vw, 2.1rem);
-  text-align: center;
-  background: var(--paper-raised);
-  border: 1px solid var(--rule);
-  border-radius: 5px;
-  box-shadow: 0 20px 44px rgb(20 30 27 / .18);
-  animation: wel-open .5s cubic-bezier(.2, .9, .25, 1) both;
-}
-/* page edge peeking out, and the spine shadow down the left side */
-.wel-card::before {
-  content: ""; position: absolute; inset: .45rem -.4rem -.45rem .6rem;
-  border: 1px solid var(--rule); border-radius: 5px;
-  background: color-mix(in srgb, var(--paper) 90%, var(--joy-1) 10%);
-  z-index: -1;
-}
-.wel-card::after {
-  content: ""; position: absolute; top: 7px; bottom: 7px; left: 0; width: 16px;
-  border-radius: 5px 0 0 5px; pointer-events: none;
-  background: linear-gradient(90deg, color-mix(in srgb, var(--ink) 15%, transparent), transparent 94%);
-}
-
-/* bookmark ribbon hanging over the top edge */
-.wel-ribbon { position: absolute; top: -.1rem; left: 50%; width: 26px; height: 58px; transform: translateX(-50%); overflow: visible; }
-.wel-ribbon path:first-child { fill: var(--joy-1); stroke: var(--ink); stroke-width: 2; stroke-linejoin: round; }
-.wel-ribbon-rule { stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; opacity: .4; fill: none; }
-
-/* small caps lines */
-.wel-caps {
-  margin: .1rem 0 0; font: 700 .72rem var(--font-ui, inherit);
-  letter-spacing: .18em; text-transform: uppercase;
-  color: color-mix(in srgb, var(--ink) 74%, var(--ink-soft));
-}
-.wel-caps--soft { margin: 0 0 .5rem; font-size: .66rem; letter-spacing: .24em; color: color-mix(in srgb, var(--ink) 62%, var(--ink-soft)); }
-
-/* the tilted crest, echoing the book title pages */
-.wel-crest {
-  display: inline-grid; place-items: center; width: 2.5rem; height: 2.5rem; margin: .1rem auto .55rem;
-  border: 2px solid var(--ink); border-radius: 46% 54% 45% 55%;
-  background: var(--joy-2); color: var(--whim-navy, #132144);
-  font-size: 1rem; transform: rotate(-8deg);
-}
-
-/* the hand-drawn loop around the title */
-.wel-head { position: relative; text-align: center; }
-.wel-loopwrap { position: relative; display: inline-block; padding: .95rem 1.35rem .5rem; max-width: 100%; }
-.wel-loop { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-.wel-loop path { stroke: var(--joy-1); stroke-width: 3; stroke-linecap: round; fill: none; opacity: .5; }
-.wel-title {
-  position: relative; margin: 0; padding: 0;
-  font: 700 clamp(1.75rem, 6.2vw, 2.5rem)/1.14 var(--font-display, Georgia, serif);
-  letter-spacing: -.015em; color: var(--ink); text-wrap: balance;
-}
-
-/* ornament row in the book pages' glyph set */
-.wel-orn { margin: .95rem 0 .1rem; font-size: .95rem; letter-spacing: .48em; text-indent: .48em; color: color-mix(in srgb, var(--joy-1) 68%, var(--ink)); }
-
-/* epigraph with a decorative first letter */
-.wel-epi {
-  margin: 1.05rem auto .1rem; max-width: 27rem; padding: .95rem 1.05rem .85rem;
-  border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
-  text-align: left;
-}
-.wel-epi p { margin: 0; font: italic 500 1.06rem/1.62 var(--font-read, Georgia, serif); color: var(--ink); }
-.wel-epi p::first-letter {
-  float: left; margin: .1em .14em 0 0; padding: 0;
-  font-family: var(--font-display, Georgia, serif); font-style: normal; font-weight: 700;
-  font-size: 2.6em; line-height: .8; color: var(--joy-1);
-}
-.wel-epi cite {
-  display: block; margin-top: .55rem; font: 700 .72rem var(--font-ui, inherit);
-  font-style: normal; letter-spacing: .16em; text-transform: uppercase;
-  color: color-mix(in srgb, var(--ink) 70%, var(--ink-soft));
-}
-
-/* the single handwritten flourish */
-.wel-flourish {
-  margin: 1rem 0 0; font-family: var(--font-hand);
-  font-size: 1.18rem; line-height: 1.25;
-  color: color-mix(in srgb, var(--joy-1) 52%, var(--ink));
-}
-
-/* actions */
-.wel-btn {
-  display: block; width: 100%; max-width: 24rem; margin: .6rem auto 0;
-  min-height: 44px; padding: .72rem 1rem;
-  border: 1.5px solid color-mix(in srgb, var(--ink) 26%, transparent); border-radius: 12px;
-  background: var(--paper-raised); color: var(--ink);
-  font: 600 .95rem var(--font-ui, inherit); cursor: pointer;
-  transition: background .15s ease, border-color .15s ease;
-}
-.wel-btn:hover { border-color: var(--ink); background: color-mix(in srgb, var(--paper-raised) 88%, var(--joy-2)); }
-.wel-btn:focus-visible { outline: 2px solid var(--joy-1); outline-offset: 2px; }
-.wel-btn--go { background: var(--joy-1); border-color: var(--joy-1); color: #fff; font-weight: 700; }
-.wel-btn--go:hover { background: var(--joy-1); border-color: var(--joy-1); color: #fff; filter: brightness(1.05); }
-/* light joy-1 themes need dark ink on the filled button */
-[data-theme="palm"] .wel-btn--go, [data-theme="midnight"] .wel-btn--go,
-[data-theme="jade"] .wel-btn--go, [data-theme="rose"] .wel-btn--go { color: #10182b; }
-[data-theme="palm"] .wel-btn--go:hover, [data-theme="midnight"] .wel-btn--go:hover,
-[data-theme="jade"] .wel-btn--go:hover, [data-theme="rose"] .wel-btn--go:hover { color: #10182b; }
-.wel-row { display: flex; gap: .55rem; max-width: 24rem; margin: .6rem auto 0; }
-.wel-row .wel-btn { margin-top: 0; }
-.wel-hint { margin: 1.15rem 0 0; font: 500 .8rem var(--font-ui, inherit); letter-spacing: .04em; color: color-mix(in srgb, var(--ink) 68%, var(--ink-soft)); }
-
-/* the page-open entrance */
-@keyframes wel-open {
-  from { opacity: 0; transform: perspective(900px) rotateY(-6deg) translateY(10px) scale(.985); }
-  to { opacity: 1; transform: none; }
-}
-
-@media (max-width: 420px) {
-  .wel-card { padding: 1.55rem 1.05rem 1.2rem; }
-  .wel-title { font-size: clamp(1.5rem, 7.6vw, 2rem); }
-  .wel-ribbon { width: 22px; height: 48px; }
-  .wel-epi p { font-size: 1rem; }
-  .wel-row { flex-direction: column; }
-  .wel-row .wel-btn { max-width: none; }
-}
-@media (max-height: 680px) {
-  .wel-ribbon { display: none; }
-  .wel-flourish { display: none; }
-  .wel-card { padding-top: 1.3rem; padding-bottom: 1.1rem; }
-  .wel-epi { margin-top: .8rem; padding: .7rem .9rem .6rem; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .wel-card { animation: none; }
-}
-
-/* the reading-area placeholder card keeps its own, matching treatment */
-#readingArea > .welcome {
-  position: static; inset: auto; z-index: auto; display: block;
-  width: auto; max-width: 35rem; margin: 4rem auto; padding: 2.5rem 2rem;
-  overflow: visible; background: var(--paper-raised);
-  border: 1px solid var(--rule); border-radius: 6px;
-  box-shadow: 0 16px 36px rgb(20 30 27 / .12);
-}
-#readingArea > .welcome h2 { margin: 0 0 .5rem; font: 700 clamp(1.6rem, 5vw, 2.2rem)/1.15 var(--font-display, Georgia, serif); color: var(--joy-1); }
-#readingArea > .welcome p { margin: 0 0 .7rem; color: var(--ink-soft); }
-#readingArea > .welcome .hint { font-size: .82rem; color: color-mix(in srgb, var(--ink) 62%, var(--ink-soft)); }
-
 /* v65b — the new handwriting face is legible at caption sizes; a small
    size/line-height lift where it is used smallest. */
 .wp-ill figcaption { font-size: .86rem; line-height: 1.4; }
@@ -3152,20 +2989,7 @@ body[data-theme="midnight"], body[data-theme="jade"], body[data-theme="rose"] { 
 .tp-note-first { line-height: 1.5; }
 .pc-hello { line-height: 1.45; }
 
-/* v68 — requested tweaks to the welcome page only
-   (1) the oval hand-drawn loop around the title is lightened to 50% opacity
-   (2) the "begin where you left off" line moves off the handwriting face
-       to an elegant italic serif (Playfair Display, italic) */
-.wel-flourish {
-  margin: 1rem 0 0;
-  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
-  font-style: italic;
-  font-weight: 400;
-  font-size: 1.16rem;
-  line-height: 1.3;
-  letter-spacing: .005em;
-  color: color-mix(in srgb, var(--joy-1) 52%, var(--ink));
-}
+
 </style>
 </head>
 
@@ -3512,13 +3336,7 @@ Tap ✦ Decorate for stickers, washi tapes and study templates."></div>
   </footer>
 </aside>
 
-      <div class="reading-area" id="readingArea">
-      <div class="welcome">
-        <h2>Begin reading</h2>
-        <p>Choose a book from the list to open it alongside its Telugu transliteration.</p>
-        <p class="hint">Press <kbd>Ctrl</kbd>+<kbd>K</kbd> to jump straight to a reference.</p>
-      </div>
-    </div>
+      <div class="reading-area" id="readingArea"></div>
     </div>
   </main>
 </div>
@@ -3537,38 +3355,6 @@ Tap ✦ Decorate for stickers, washi tapes and study templates."></div>
     </span>
   </div>
   <div class="hbf-body" id="hbFullBody"></div>
-</div>
-
-<div class="welcome" id="welcome" hidden>
-  <div class="wel-card" role="dialog" aria-modal="true" aria-labelledby="welTitle" aria-describedby="welSub">
-    <svg class="wel-ribbon" viewBox="0 0 28 62" aria-hidden="true" focusable="false">
-      <path d="M4 3 h20 v54 l-10 -9.5 -10 9.5 Z"/>
-      <path class="wel-ribbon-rule" d="M9.5 12 h9 M9.5 19 h9"/>
-    </svg>
-    <span class="wel-crest" aria-hidden="true">✦</span>
-    <p class="wel-caps wel-caps--soft">the holy scriptures</p>
-    <div class="wel-head">
-      <span class="wel-loopwrap">
-        <svg class="wel-loop" viewBox="0 0 230 84" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-          <path vector-effect="non-scaling-stroke" d="M32 46 C 26 20, 78 8, 118 10 C 172 12, 208 26, 206 46 C 204 68, 156 80, 110 78 C 60 76, 18 72, 28 42" fill="none"/>
-        </svg>
-        <h1 class="wel-title" id="welTitle">Telugu Bible Reader</h1>
-      </span>
-    </div>
-    <p class="wel-caps" id="welSub">King James Version · Telugu transliteration</p>
-    <div class="wel-orn" aria-hidden="true">✿ ❧ ✦</div>
-    <blockquote class="wel-epi">
-      <p>Your word is a lamp to my feet and a light to my path.</p>
-      <cite>Psalm 119 : 105</cite>
-    </blockquote>
-    <p class="wel-flourish" aria-hidden="true">begin where you left off</p>
-    <button type="button" class="wel-btn wel-btn--go" data-wel="continue">Continue reading → <span id="welRef"></span></button>
-    <div class="wel-row">
-      <button type="button" class="wel-btn" data-wel="books">Browse the books</button>
-      <button type="button" class="wel-btn" data-wel="notes">My notes</button>
-    </div>
-    <p class="wel-hint">Tap anywhere to start reading</p>
-  </div>
 </div>
 
 <div class="menu-backdrop" id="menuBackdrop"></div>
@@ -7709,6 +7495,9 @@ document.addEventListener('keydown', function (e) {
       if (last.length === 2) {
         var bi = Number(last[0]), ci = Number(last[1]);
         if (BIBLE[bi] && BIBLE[bi][ci]) { openChapter(bi, ci); }
+      } else if (BIBLE[0] && BIBLE[0][0]) {
+        /* nothing saved yet: open the first chapter rather than an empty page */
+        openChapter(0, 0);
       }
 
       var loader = $('loader');
@@ -7839,63 +7628,6 @@ document.addEventListener('keydown', function (e) {
     new MutationObserver(__studySync).observe(__studyEl, { attributes: true, attributeFilter: ['hidden'] });
   }
 
-  /* v50: welcome page */
-  var wel = document.getElementById('welcome');
-  if (wel) {
-    var welClose = function () {
-      if (wel.hidden) { return; }
-      wel.hidden = true;
-      document.body.classList.remove('wel-open');
-      var back = wel.__returnFocus;
-      wel.__returnFocus = null;
-      if (back && back.focus && document.contains(back)) { try { back.focus(); } catch (er) {} }
-    };
-    var welFocusables = function () {
-      return Array.prototype.filter.call(
-        wel.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'),
-        function (el) { return !el.disabled && el.offsetParent !== null; });
-    };
-    wel.addEventListener('click', function (e) { if (!e.target.closest('.wel-card')) { welClose(); } });
-    wel.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') { e.stopPropagation(); welClose(); return; }
-      if (e.key !== 'Tab') { return; }
-      var f = welFocusables();
-      if (!f.length) { return; }
-      var first = f[0], last = f[f.length - 1];
-      if (e.shiftKey && (document.activeElement === first || !wel.contains(document.activeElement))) { e.preventDefault(); last.focus(); }
-      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
-    });
-    /* Escape from anywhere closes the welcome first — one key, one layer */
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && !wel.hidden) { e.stopPropagation(); welClose(); }
-    }, true);
-    document.addEventListener('click', function (e) {
-      var b = e.target.closest('#welcome [data-wel]');
-      if (!b) { return; }
-      var k = b.getAttribute('data-wel');
-      welClose();
-      if (k === 'books') {
-        var bk = document.querySelector('[data-shelf-tab="books"]');
-        if (bk) { bk.click(); }
-        try { openSidebar(); } catch (er) {}
-      } else if (k === 'notes') {
-        var nb = document.getElementById('mNotepad');
-        if (nb) { nb.click(); } else { npToggleSafe(); }
-      }
-    });
-    var welShow = function () {
-      var ref = document.getElementById('welRef'), cr = document.getElementById('currentRef');
-      if (ref) { ref.textContent = (cr && cr.textContent.trim()) ? cr.textContent.trim() : ''; }
-      wel.__returnFocus = document.activeElement;
-      wel.hidden = false;
-      document.body.classList.add('wel-open');
-      var go = wel.querySelector('[data-wel="continue"]');
-      setTimeout(function () { if (go && document.activeElement === document.body) { try { go.focus(); } catch (er) {} } }, 80);
-    };
-    if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', function () { setTimeout(welShow, 300); }); }
-    else { setTimeout(welShow, 300); }
-  }
-
   /* study pages: back button + routing */
   document.addEventListener('click', function (e) {
     if (e.target.closest('#hbFullClose')) {
@@ -7963,12 +7695,20 @@ document.addEventListener('keydown', function (e) {
     rose:      "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%23e0729a%22%2F%3E%3Cpath%20d%3D%22M32%205l7.6%2016%2017.5%202.5-12.7%2012.2%203.1%2017.4L32%2045l-15.5%208.1%203.1-17.4L6.9%2023.5%2024.4%2021Z%22%20fill%3D%22%23f7c325%22%20stroke%3D%22%23132144%22%20stroke-width%3D%222%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E"
   };
   var DEFAULT_THEME = "dawn";
+  /* the browser / status-bar tint follows the theme too */
+  var THEME_COLORS = { dawn: "#6557f5", palm: "#1bae9f", parchment: "#8c2f2f",
+    midnight: "#8aa6ff", jade: "#d4a843", rose: "#e0729a" };
   function syncFavicon() {
     var link = document.getElementById("theme-icon");
     if (!link) { return; }
     var theme = document.documentElement.getAttribute("data-theme") || DEFAULT_THEME;
     var href = ICONS[theme] || ICONS[DEFAULT_THEME];
     if (link.getAttribute("href") !== href) { link.setAttribute("href", href); }
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) {
+      var col = THEME_COLORS[theme] || THEME_COLORS[DEFAULT_THEME];
+      if (meta.getAttribute("content") !== col) { meta.setAttribute("content", col); }
+    }
   }
   /* set the icon for the theme already in force (covers a restored theme) */
   syncFavicon();
@@ -7981,6 +7721,14 @@ document.addEventListener('keydown', function (e) {
   /* belt and braces for late boot / bfcache restores */
   document.addEventListener("DOMContentLoaded", syncFavicon);
   window.addEventListener("pageshow", syncFavicon);
+
+  /* ---- PWA: register the service worker when served over http(s) ----
+     (sw.js sits next to this file; it enables install + offline) */
+  if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) {
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("sw.js").catch(function () {});
+    });
+  }
 })();
 </script>
 </body>
